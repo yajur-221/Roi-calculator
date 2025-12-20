@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator - TheHireHub.AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .calculator-container {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 1600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-img {
+            height: 80px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .calculator-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .calculator-subtitle {
+            font-size: 18px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+
+        .input-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border-radius: 16px;
+            padding: 36px;
+            margin-bottom: 36px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 28px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .input-label-small {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 400;
+            margin-top: -4px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #cbd5e1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::after {
+            left: 26px;
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-description {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .slider-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 212, 255, 0.4);
+            transition: all 0.2s;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 212, 255, 0.4);
+            transition: all 0.2s;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .slider::-moz-range-track {
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+        }
+
+        .slider-limits {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .input-field {
+            padding: 10px 14px;
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2563eb;
+            background: white;
+            transition: all 0.2s;
+            width: 120px;
+            text-align: center;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #cbd5e1;
+            font-weight: 400;
+        }
+
+        .results-section {
+            margin-top: 48px;
+        }
+
+        .roi-summary {
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            border-radius: 16px;
+            padding: 32px;
+            color: white;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .roi-summary-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            opacity: 0.9;
+        }
+
+        .roi-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .roi-metric {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .roi-metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .roi-metric-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .cost-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .cost-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 24px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .cost-card.without {
+            border-color: rgba(203, 213, 225, 0.8);
+        }
+
+        .cost-card.with {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.95) 0%, rgba(37, 99, 235, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-color: rgba(0, 212, 255, 0.8);
+            color: white;
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+        }
+
+        .cost-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .cost-breakdown {
+            font-size: 14px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cost-breakdown.without {
+            border-top-color: rgba(226, 232, 240, 0.8);
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 4px 0;
+        }
+
+        .cost-total {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cost-total.without {
+            border-top-color: rgba(226, 232, 240, 0.8);
+            color: #1a1a1a;
+        }
+
+        .savings-highlight {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #a855f7 0%, #00d4ff 100%) 1;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .savings-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a855f7 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .savings-label {
+            font-size: 18px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .plan-recommendation-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .plan-recommendation-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-recommendation-name {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .plan-recommendation-price {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        .plan-recommendation-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 24px;
+            text-align: left;
+        }
+
+        .plan-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .plan-feature-item::before {
+            content: "✓";
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .plan-recommendation-info {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 16px;
+            font-style: italic;
+        }
+
+        .time-savings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .time-savings-item {
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .time-savings-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 4px;
+        }
+
+        .time-savings-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .calculate-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 32px;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .calculate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .calculate-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                padding: 32px 24px;
+            }
+
+            .calculator-title {
+                font-size: 32px;
+            }
+
+            .input-section {
+                padding: 24px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .slider-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .input-field {
+                width: 100%;
+            }
+
+            .roi-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cost-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .time-savings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-recommendation-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="logo-container">
+            <img src="https://www.thehirehub.ai/ai.png" alt="TheHireHub.AI Logo" class="logo-img">
+        </div>
+        <h1 class="calculator-title">ROI Calculator</h1>
+        <p class="calculator-subtitle">
+            Calculate your potential savings and ROI with TheHireHub.AI's AI-powered recruitment platform
+        </p>
+
+        <!-- Current Hiring Metrics -->
+        <div class="input-section">
+            <h2 class="section-title">1. Current Hiring Metrics</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label class="input-label">Positions hired per month</label>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="positions-per-month-slider" class="slider" min="1" max="50" value="5" step="1">
+                        </div>
+                        <input type="number" id="positions-per-month" class="input-field" value="5" min="1" max="50">
+                    </div>
+                    <div class="slider-limits">
+                        <span>1</span>
+                        <span>50</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Average time-to-hire (days)</label>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="time-to-hire-slider" class="slider" min="1" max="180" value="45" step="1">
+                        </div>
+                        <input type="number" id="time-to-hire" class="input-field" value="45" min="1" max="180">
+                    </div>
+                    <div class="slider-limits">
+                        <span>1</span>
+                        <span>180</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Number of recruiters/HR personnel</label>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="num-recruiters-slider" class="slider" min="1" max="50" value="3" step="1">
+                        </div>
+                        <input type="number" id="num-recruiters" class="input-field" value="3" min="1" max="50">
+                    </div>
+                    <div class="slider-limits">
+                        <span>1</span>
+                        <span>50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Cost Structure -->
+        <div class="input-section">
+            <h2 class="section-title">2. Current Cost Structure</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label class="input-label">Use external agencies (%)</label>
+                    <span class="input-label-small">Percentage of positions filled via agencies</span>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="agency-usage-pct-slider" class="slider" min="0" max="100" value="40" step="1">
+                        </div>
+                        <input type="number" id="agency-usage-pct" class="input-field" value="40" min="0" max="100">
+                    </div>
+                    <div class="slider-limits">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Agency fee (%)</label>
+                    <span class="input-label-small">Typically 7-20% of annual salary</span>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="agency-fee-pct-slider" class="slider" min="0" max="30" value="15" step="1">
+                        </div>
+                        <input type="number" id="agency-fee-pct" class="input-field" value="15" min="0" max="30">
+                    </div>
+                    <div class="slider-limits">
+                        <span>0%</span>
+                        <span>30%</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Average CTC per hire (₹)</label>
+                    <span class="input-label-small">Used for calculating agency fees</span>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="avg-ctc-per-hire-slider" class="slider" min="300000" max="5000000" value="1200000" step="50000">
+                        </div>
+                        <input type="number" id="avg-ctc-per-hire" class="input-field" value="1200000" min="300000" max="5000000">
+                    </div>
+                    <div class="slider-limits">
+                        <span>₹3L</span>
+                        <span>₹50L</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Recruiter monthly salary (₹)</label>
+                    <span class="input-label-small">Monthly salary including overhead</span>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="recruiter-monthly-salary-slider" class="slider" min="0" max="500000" value="80000" step="5000">
+                        </div>
+                        <input type="number" id="recruiter-monthly-salary" class="input-field" value="80000" min="0" max="500000">
+                    </div>
+                    <div class="slider-limits">
+                        <span>₹0</span>
+                        <span>₹5L</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Hours/week on manual tasks</label>
+                    <span class="input-label-small">Sourcing, screening, scheduling per recruiter</span>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="manual-hours-per-week-slider" class="slider" min="0" max="40" value="20" step="0.5">
+                        </div>
+                        <input type="number" id="manual-hours-per-week" class="input-field" value="20" min="0" max="40" step="0.5">
+                    </div>
+                    <div class="slider-limits">
+                        <span>0 hrs</span>
+                        <span>40 hrs</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Costs -->
+        <div class="input-section">
+            <h2 class="section-title">3. Technology Costs</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label class="input-label">Job board costs per month (₹)</label>
+                    <span class="input-label-small">LinkedIn Recruiter, Naukri, etc.</span>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="job-board-costs-slider" class="slider" min="0" max="500000" value="42000" step="5000">
+                        </div>
+                        <input type="number" id="job-board-costs" class="input-field" value="42000" min="0" max="500000">
+                    </div>
+                    <div class="slider-limits">
+                        <span>₹0</span>
+                        <span>₹5L</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">ATS/Recruitment software per month (₹)</label>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="ats-costs-slider" class="slider" min="0" max="300000" value="25000" step="5000">
+                        </div>
+                        <input type="number" id="ats-costs" class="input-field" value="25000" min="0" max="300000">
+                    </div>
+                    <div class="slider-limits">
+                        <span>₹0</span>
+                        <span>₹3L</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Other recruitment tools per month (₹)</label>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="other-tools-costs-slider" class="slider" min="0" max="200000" value="8000" step="5000">
+                        </div>
+                        <input type="number" id="other-tools-costs" class="input-field" value="8000" min="0" max="200000">
+                    </div>
+                    <div class="slider-limits">
+                        <span>₹0</span>
+                        <span>₹2L</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Number of job slots used</label>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="job-slots-used-slider" class="slider" min="0" max="100" value="0" step="1">
+                        </div>
+                        <input type="number" id="job-slots-used" class="input-field" value="0" min="0" max="100">
+                    </div>
+                    <div class="slider-limits">
+                        <span>0</span>
+                        <span>100</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Cost of job slots per month (₹)</label>
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <input type="range" id="job-slots-costs-slider" class="slider" min="0" max="500000" value="0" step="5000">
+                        </div>
+                        <input type="number" id="job-slots-costs" class="input-field" value="0" min="0" max="500000">
+                    </div>
+                    <div class="slider-limits">
+                        <span>₹0</span>
+                        <span>₹5L</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan Recommendation -->
+        <div class="plan-recommendation-card" id="plan-recommendation" style="display: none;">
+            <div class="plan-recommendation-badge">Recommended Plan</div>
+            <div class="plan-recommendation-name" id="recommended-plan-name">-</div>
+            <div class="plan-recommendation-price" id="recommended-plan-price">-</div>
+            <div class="plan-recommendation-features" id="recommended-plan-features"></div>
+            <div class="plan-recommendation-info" id="recommended-plan-info"></div>
+        </div>
+
+        <button class="calculate-button" onclick="calculateROI()">Calculate ROI</button>
+
+        <!-- Results Section -->
+        <div class="results-section" id="results-section" style="display: none;">
+            <!-- ROI Summary -->
+            <div class="roi-summary">
+                <div class="roi-summary-title">Your ROI Summary</div>
+                <div class="roi-metrics-grid">
+                    <div class="roi-metric">
+                        <div class="roi-metric-value" id="monthly-savings">₹0</div>
+                        <div class="roi-metric-label">Monthly Savings</div>
+                    </div>
+                    <div class="roi-metric">
+                        <div class="roi-metric-value" id="roi-percentage">0%</div>
+                        <div class="roi-metric-label">ROI</div>
+                    </div>
+                    <div class="roi-metric">
+                        <div class="roi-metric-value" id="payback-period">0</div>
+                        <div class="roi-metric-label">Payback Period (months)</div>
+                    </div>
+                    <div class="roi-metric">
+                        <div class="roi-metric-value" id="cost-per-hire-reduction">₹0</div>
+                        <div class="roi-metric-label">Cost Per Hire Reduction</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Comparison -->
+            <div class="cost-comparison">
+                <h2 class="section-title" style="grid-column: 1 / -1; margin-bottom: 24px; text-align: center;">Total cost comparison (per month)</h2>
+                <div class="cost-card without">
+                    <div class="cost-card-title">Without TheHireHub.AI</div>
+                    <div class="cost-breakdown without" id="cost-breakdown-without"></div>
+                    <div class="cost-total without" id="total-cost-without">₹0</div>
+                </div>
+                <div class="cost-card with">
+                    <div class="cost-card-title">With TheHireHub.AI</div>
+                    <div class="cost-breakdown" id="cost-breakdown-with"></div>
+                    <div class="cost-total" id="total-cost-with">₹0</div>
+                </div>
+            </div>
+
+            <!-- Time Savings -->
+            <div class="input-section">
+                <h2 class="section-title">Time Savings</h2>
+                <div class="time-savings-grid">
+                    <div class="time-savings-item">
+                        <div class="time-savings-value" id="sourcing-time-saved">0 hrs</div>
+                        <div class="time-savings-label">Sourcing Time Saved/Month</div>
+                    </div>
+                    <div class="time-savings-item">
+                        <div class="time-savings-value" id="screening-time-saved">0 hrs</div>
+                        <div class="time-savings-label">Screening Time Saved/Month</div>
+                    </div>
+                    <div class="time-savings-item">
+                        <div class="time-savings-value" id="coordination-time-saved">0 hrs</div>
+                        <div class="time-savings-label">Coordination Time Saved/Month</div>
+                    </div>
+                    <div class="time-savings-item">
+                        <div class="time-savings-value" id="time-saved-hiring-cycle">0 days</div>
+                        <div class="time-savings-label">Time saved in the hiring cycle</div>
+                        <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">(Depends on the recruiters efficiency)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Savings Highlight -->
+            <div class="savings-highlight">
+                <div class="savings-value" id="total-savings-display">₹0</div>
+                <div class="savings-label">Total Monthly Savings with TheHireHub.AI</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // USD to INR conversion
+        const USD_TO_INR = 83;
+
+        // TheHireHub.AI Pricing Plans
+        const PLANS = {
+            startup: { 
+                name: "Startup",
+                monthlyPrice: 99, 
+                jobSlots: 3,
+                features: [
+                    "3 Job Slots",
+                    "Limited Candidates per Job",
+                    "10 JD Creations",
+                    "2 AI Enriched CV per Job",
+                    "48-72hr Support"
+                ]
+            },
+            earlyStage: { 
+                name: "Early Stage",
+                monthlyPrice: 299, 
+                jobSlots: 10,
+                features: [
+                    "10 Job Slots",
+                    "Limited Candidates per Job",
+                    "25 JD Creations",
+                    "5 AI Enriched CV per Job",
+                    "24hr Support",
+                    "Outreach Customization",
+                    "AI Insights"
+                ]
+            },
+            growth: { 
+                name: "Growth",
+                monthlyPrice: 899, 
+                jobSlots: 25,
+                features: [
+                    "25 Job Slots",
+                    "Unlimited Candidates",
+                    "Unlimited JD Creations",
+                    "Top Candidates AI Enriched CV",
+                    "8hr Support",
+                    "Outreach Customization",
+                    "Human Consultant On Demand"
+                ]
+            },
+            enterprise: { 
+                name: "Enterprise",
+                monthlyPrice: null, 
+                jobSlots: Infinity,
+                features: [
+                    "Custom Job Slots",
+                    "Unlimited Candidates",
+                    "Unlimited JD Creations",
+                    "AI Enriched CV",
+                    "Dedicated Manager",
+                    "All Features Included"
+                ]
+            }
+        };
+
+        // Efficiency improvements with TheHireHub.AI
+        const EFFICIENCY_GAINS = {
+            sourcingTimeReduction: 0.80,      // 80% reduction
+            screeningTimeReduction: 0.50,     // 50% reduction
+            coordinationTimeReduction: 0.70, // 70% reduction
+            timeToHireReduction: 0.35,       // 35% reduction
+            jobBoardCostReduction: 0.90       // 90% elimination (TheHireHub.AI includes job postings & sourcing, only 10% kept for specialized niche boards)
+        };
+
+        // Time estimates per activity
+        const TIME_PER_ACTIVITY = {
+            sourcingPerCandidate: 0.5,      // hours
+            screeningPerCandidate: 0.25,     // hours
+            coordinationPerHire: 2         // hours
+        };
+
+        function formatCurrency(num) {
+            return '₹' + num.toLocaleString('en-IN');
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString('en-IN');
+        }
+
+        function getRecommendedPlan(positionsPerMonth) {
+            if (positionsPerMonth <= PLANS.startup.jobSlots) return 'startup';
+            if (positionsPerMonth <= PLANS.earlyStage.jobSlots) return 'earlyStage';
+            if (positionsPerMonth <= PLANS.growth.jobSlots) return 'growth';
+            return 'enterprise';
+        }
+
+        function updatePlanRecommendation() {
+            const positionsPerMonth = parseFloat(document.getElementById('positions-per-month').value) || 0;
+            
+            if (positionsPerMonth === 0) {
+                document.getElementById('plan-recommendation').style.display = 'none';
+                return;
+            }
+
+            const planKey = getRecommendedPlan(positionsPerMonth);
+            const plan = PLANS[planKey];
+
+            // Update plan name
+            document.getElementById('recommended-plan-name').textContent = plan.name + ' Plan';
+
+            // Update plan price
+            if (plan.monthlyPrice === null) {
+                document.getElementById('recommended-plan-price').textContent = 'Custom Pricing - Contact Sales';
+            } else {
+                const monthlyPriceINR = plan.monthlyPrice * USD_TO_INR;
+                document.getElementById('recommended-plan-price').innerHTML = 
+                    `${formatCurrencyUSD(plan.monthlyPrice)}/month<br><span style="font-size: 18px; opacity: 0.9;">(${formatCurrency(Math.round(monthlyPriceINR))}/month)</span>`;
+            }
+
+            // Update plan features
+            const featuresHtml = plan.features.map(feature => 
+                `<div class="plan-feature-item">${feature}</div>`
+            ).join('');
+            document.getElementById('recommended-plan-features').innerHTML = featuresHtml;
+
+            // Update plan info
+            let infoText = '';
+            if (planKey === 'enterprise') {
+                infoText = `For ${formatNumber(Math.round(positionsPerMonth))}+ concurrent job openings per month, our Enterprise plan offers custom pricing and unlimited capacity.`;
+            } else {
+                infoText = `Perfect for ${formatNumber(Math.round(positionsPerMonth))} concurrent job openings per month. Includes ${plan.jobSlots} job slots.`;
+            }
+            document.getElementById('recommended-plan-info').textContent = infoText;
+
+            // Show the recommendation card
+            document.getElementById('plan-recommendation').style.display = 'block';
+        }
+
+        function formatCurrencyUSD(num) {
+            return '$' + num.toLocaleString('en-US');
+        }
+
+        function calculateROI() {
+            // Get all input values (all monthly now)
+            const positionsPerMonth = parseFloat(document.getElementById('positions-per-month').value) || 0;
+            const timeToHire = parseFloat(document.getElementById('time-to-hire').value) || 0;
+            const numRecruiters = parseFloat(document.getElementById('num-recruiters').value) || 0;
+            const agencyUsagePct = parseFloat(document.getElementById('agency-usage-pct').value) || 0;
+            const agencyFeePct = parseFloat(document.getElementById('agency-fee-pct').value) || 0;
+            const avgCtcPerHire = parseFloat(document.getElementById('avg-ctc-per-hire').value) || 1200000;
+            // Use average CTC per hire for agency fees calculations
+            const avgSalary = avgCtcPerHire; // Use user-provided CTC
+            const recruiterMonthlySalary = parseFloat(document.getElementById('recruiter-monthly-salary').value) || 0;
+            // Convert monthly salary to hourly cost (assuming 173 hours per month = 40 hrs/week * 4.33 weeks)
+            const recruiterHourlyCost = recruiterMonthlySalary / 173;
+            const manualHoursPerWeek = parseFloat(document.getElementById('manual-hours-per-week').value) || 0;
+            const jobBoardCosts = parseFloat(document.getElementById('job-board-costs').value) || 0; // Already monthly
+            const atsCosts = parseFloat(document.getElementById('ats-costs').value) || 0; // Already monthly
+            const otherToolsCosts = parseFloat(document.getElementById('other-tools-costs').value) || 0; // Already monthly
+            const jobSlotsUsed = parseFloat(document.getElementById('job-slots-used').value) || 0;
+            const jobSlotsCosts = parseFloat(document.getElementById('job-slots-costs').value) || 0; // Already monthly
+            // Default values for quality metrics (no longer user inputs)
+            const candidatesPerHire = 15; // Default: 15 candidates screened per hire
+
+            // Calculate Traditional Costs (all monthly)
+            // Agency fees: Calculate annual agency fees first, then convert to monthly
+            const annualAgencyHires = Math.round(positionsPerMonth * 12 * (agencyUsagePct / 100));
+            const annualAgencyFees = annualAgencyHires * avgSalary * (agencyFeePct / 100);
+            const agencyFees = annualAgencyFees / 12; // Convert annual to monthly
+            
+            const recruiterSourcingHours = positionsPerMonth * candidatesPerHire * TIME_PER_ACTIVITY.sourcingPerCandidate;
+            const recruiterScreeningHours = positionsPerMonth * candidatesPerHire * TIME_PER_ACTIVITY.screeningPerCandidate;
+            const recruiterCoordinationHours = positionsPerMonth * TIME_PER_ACTIVITY.coordinationPerHire;
+            const totalRecruiterHours = recruiterSourcingHours + recruiterScreeningHours + recruiterCoordinationHours;
+            // Recruiter Time Cost = Total monthly salary of all recruiters
+            const recruiterTimeCost = recruiterMonthlySalary * numRecruiters;
+
+            // Opportunity Cost of Open Positions (disabled - always excluded)
+            const includeOpportunityCost = false;
+            const vacancyCosts = 0;
+
+            const traditionalTotal = agencyFees + jobBoardCosts + atsCosts + otherToolsCosts + jobSlotsCosts + recruiterTimeCost + vacancyCosts;
+
+            // Calculate Costs with TheHireHub.AI (monthly)
+            const recommendedPlanKey = getRecommendedPlan(positionsPerMonth);
+            const recommendedPlan = PLANS[recommendedPlanKey];
+            let thehirehubCost = 0;
+            if (recommendedPlan.monthlyPrice === null) {
+                thehirehubCost = PLANS.growth.monthlyPrice * USD_TO_INR * 1.5; // Enterprise estimate (monthly)
+            } else {
+                thehirehubCost = recommendedPlan.monthlyPrice * USD_TO_INR; // Monthly cost
+            }
+
+            // Update plan recommendation display
+            updatePlanRecommendation();
+
+            // Reduced costs (monthly)
+            const reducedAgencyFees = 0; // Agency fees eliminated (TheHireHub.AI replaces agencies)
+            const reducedJobBoardCosts = 0; // Job board costs eliminated (included in TheHireHub.AI)
+            const reducedAtsCosts = 0; // ATS costs eliminated
+            const reducedOtherToolsCosts = 0; // Other tools costs eliminated
+
+            // Time savings (monthly)
+            const sourcingTimeSaved = recruiterSourcingHours * EFFICIENCY_GAINS.sourcingTimeReduction;
+            const screeningTimeSaved = recruiterScreeningHours * EFFICIENCY_GAINS.screeningTimeReduction;
+            const coordinationTimeSaved = recruiterCoordinationHours * EFFICIENCY_GAINS.coordinationTimeReduction;
+            const totalTimeSaved = sourcingTimeSaved + screeningTimeSaved + coordinationTimeSaved;
+            const timeCostSaved = totalTimeSaved * recruiterHourlyCost;
+
+            // Reduced opportunity costs (disabled - always excluded)
+            const reducedVacancyCosts = 0;
+            const vacancyCostSaved = 0;
+
+            const thehirehubTotal = thehirehubCost + reducedAgencyFees + reducedJobBoardCosts + reducedAtsCosts + reducedOtherToolsCosts + 
+                                   0 + reducedVacancyCosts; // Recruiter time costs eliminated (fully automated)
+
+            // Calculate ROI Metrics (monthly)
+            const monthlySavings = traditionalTotal - thehirehubTotal;
+            const roiPercentage = thehirehubCost > 0 ? ((monthlySavings * 12) / (thehirehubCost * 12)) * 100 : 0;
+            const paybackPeriod = thehirehubCost > 0 ? (thehirehubCost / monthlySavings) : 0;
+            const costPerHireTraditional = traditionalTotal / positionsPerMonth;
+            const costPerHireThehirehub = thehirehubTotal / positionsPerMonth;
+            const costPerHireReduction = costPerHireTraditional - costPerHireThehirehub;
+
+            // Time saved in the hiring cycle (days)
+            // Based on time-to-hire reduction efficiency (35% reduction)
+            const timeSavedInHiringCycle = timeToHire * EFFICIENCY_GAINS.timeToHireReduction;
+
+            // Display Results
+            document.getElementById('monthly-savings').textContent = formatCurrency(Math.round(monthlySavings));
+            document.getElementById('roi-percentage').textContent = Math.round(roiPercentage) + '%';
+            document.getElementById('payback-period').textContent = Math.round(paybackPeriod * 10) / 10;
+            document.getElementById('cost-per-hire-reduction').textContent = formatCurrency(Math.round(costPerHireReduction));
+            document.getElementById('total-savings-display').textContent = formatCurrency(Math.round(monthlySavings));
+
+            // Cost Breakdown - Without
+            const breakdownWithout = `
+                <div class="cost-item">
+                    <span>Agency Fees</span>
+                    <span>${formatCurrency(Math.round(agencyFees))}</span>
+                </div>
+                <div class="cost-item">
+                    <span>Job Board Costs</span>
+                    <span>${formatCurrency(Math.round(jobBoardCosts))}</span>
+                </div>
+                <div class="cost-item">
+                    <span>ATS/Software Costs</span>
+                    <span>${formatCurrency(Math.round(atsCosts + otherToolsCosts))}</span>
+                </div>
+                <div class="cost-item">
+                    <span>Job Slots Costs</span>
+                    <span>${formatCurrency(Math.round(jobSlotsCosts))}</span>
+                </div>
+                <div class="cost-item">
+                    <span>Recruiter Costs</span>
+                    <span>${formatCurrency(Math.round(recruiterTimeCost))}</span>
+                </div>
+            `;
+            document.getElementById('cost-breakdown-without').innerHTML = breakdownWithout;
+            document.getElementById('total-cost-without').textContent = formatCurrency(Math.round(traditionalTotal));
+
+            // Cost Breakdown - With
+            const breakdownWith = `
+                <div class="cost-item">
+                    <span>TheHireHub.AI Subscription</span>
+                    <span>${formatCurrency(Math.round(thehirehubCost))}</span>
+                </div>
+                <div class="cost-item">
+                    <span>Reduced Agency Fees</span>
+                    <span>${formatCurrency(0)}</span>
+                </div>
+                <div class="cost-item">
+                    <span>Job Board Costs (Eliminated)</span>
+                    <span>${formatCurrency(0)}</span>
+                </div>
+                <div class="cost-item" style="font-size: 12px; opacity: 0.8; margin-top: 4px; font-style: italic;">
+                    <span>✓ Job postings & sourcing included in TheHireHub.AI</span>
+                    <span></span>
+                </div>
+                <div class="cost-item">
+                    <span>Reduced Software Costs</span>
+                    <span>${formatCurrency(0)}</span>
+                </div>
+                <div class="cost-item">
+                    <span>Recruiter Time (After Savings)</span>
+                    <span>${formatCurrency(0)}</span>
+                </div>
+            `;
+            document.getElementById('cost-breakdown-with').innerHTML = breakdownWith;
+            document.getElementById('total-cost-with').textContent = formatCurrency(Math.round(thehirehubTotal));
+
+            // Time Savings (already monthly)
+            document.getElementById('sourcing-time-saved').textContent = formatNumber(Math.round(sourcingTimeSaved)) + ' hrs';
+            document.getElementById('screening-time-saved').textContent = formatNumber(Math.round(screeningTimeSaved)) + ' hrs';
+            document.getElementById('coordination-time-saved').textContent = formatNumber(Math.round(coordinationTimeSaved)) + ' hrs';
+            document.getElementById('time-saved-hiring-cycle').textContent = Math.round(timeSavedInHiringCycle * 10) / 10 + ' days';
+
+            // Show results
+            document.getElementById('results-section').style.display = 'block';
+            document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Sync sliders with input fields
+        function syncSliderInput(sliderId, inputId) {
+            const slider = document.getElementById(sliderId);
+            const input = document.getElementById(inputId);
+            
+            if (slider && input) {
+                slider.addEventListener('input', (e) => {
+                    input.value = e.target.value;
+                    if (inputId === 'positions-per-month') updatePlanRecommendation();
+                });
+                
+                input.addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value) || 0;
+                    const min = parseFloat(slider.min) || 0;
+                    const max = parseFloat(slider.max) || 100;
+                    const clampedValue = Math.max(min, Math.min(max, value));
+                    slider.value = clampedValue;
+                    input.value = clampedValue;
+                    if (inputId === 'positions-per-month') updatePlanRecommendation();
+                });
+            }
+        }
+
+        // Sync all slider-input pairs
+        syncSliderInput('positions-per-month-slider', 'positions-per-month');
+        syncSliderInput('time-to-hire-slider', 'time-to-hire');
+        syncSliderInput('num-recruiters-slider', 'num-recruiters');
+        syncSliderInput('avg-ctc-per-hire-slider', 'avg-ctc-per-hire');
+        syncSliderInput('agency-usage-pct-slider', 'agency-usage-pct');
+        syncSliderInput('agency-fee-pct-slider', 'agency-fee-pct');
+        syncSliderInput('recruiter-monthly-salary-slider', 'recruiter-monthly-salary');
+        syncSliderInput('manual-hours-per-week-slider', 'manual-hours-per-week');
+        syncSliderInput('job-board-costs-slider', 'job-board-costs');
+        syncSliderInput('ats-costs-slider', 'ats-costs');
+        syncSliderInput('other-tools-costs-slider', 'other-tools-costs');
+        syncSliderInput('job-slots-used-slider', 'job-slots-used');
+        syncSliderInput('job-slots-costs-slider', 'job-slots-costs');
+        
+        // Update plan recommendation when positions-per-month changes
+        document.getElementById('positions-per-month').addEventListener('input', updatePlanRecommendation);
+        
+        // Initial plan recommendation check
+        updatePlanRecommendation();
+    </script>
+</body>
+</html>
