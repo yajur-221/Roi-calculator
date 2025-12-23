@@ -794,10 +794,6 @@
                         <div class="roi-metric-label">ROI</div>
                     </div>
                     <div class="roi-metric">
-                        <div class="roi-metric-value" id="payback-period">0</div>
-                        <div class="roi-metric-label">Payback Period (months)</div>
-                    </div>
-                    <div class="roi-metric">
                         <div class="roi-metric-value" id="cost-per-hire-reduction">₹0</div>
                         <div class="roi-metric-label">Cost Per Hire Reduction</div>
                     </div>
@@ -1066,7 +1062,6 @@
             // Calculate ROI Metrics (monthly)
             const monthlySavings = traditionalTotal - thehirehubTotal;
             const roiPercentage = thehirehubCost > 0 ? ((monthlySavings * 12) / (thehirehubCost * 12)) * 100 : 0;
-            const paybackPeriod = thehirehubCost > 0 ? (thehirehubCost / monthlySavings) : 0;
             const costPerHireTraditional = traditionalTotal / positionsPerMonth;
             const costPerHireThehirehub = thehirehubTotal / positionsPerMonth;
             const costPerHireReduction = costPerHireTraditional - costPerHireThehirehub;
@@ -1078,7 +1073,6 @@
             // Display Results
             document.getElementById('monthly-savings').textContent = formatCurrency(Math.round(monthlySavings));
             document.getElementById('roi-percentage').textContent = Math.round(roiPercentage) + '%';
-            document.getElementById('payback-period').textContent = Math.round(paybackPeriod * 10) / 10;
             document.getElementById('cost-per-hire-reduction').textContent = formatCurrency(Math.round(costPerHireReduction));
             document.getElementById('total-savings-display').textContent = formatCurrency(Math.round(monthlySavings));
 
