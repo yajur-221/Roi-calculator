@@ -379,44 +379,123 @@
         }
 
         .roi-summary {
-            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
-            border-radius: 16px;
-            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .roi-summary-top {
+            background: #1a1a1a;
+            border-radius: 16px 16px 0 0;
+            padding: 40px 32px;
             color: white;
+        }
+
+        .roi-summary-title {
+            font-size: 24px;
+            font-weight: 700;
             margin-bottom: 32px;
             text-align: center;
         }
 
-        .roi-summary-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            opacity: 0.9;
-        }
-
         .roi-metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            position: relative;
         }
 
         .roi-metric {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
             padding: 20px;
-            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+        }
+
+        .roi-metric:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 20%;
+            bottom: 20%;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .roi-metric-value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
             margin-bottom: 8px;
+            color: #ff6b35;
+        }
+
+        .roi-metric-value.secondary {
+            color: white;
+            font-size: 32px;
         }
 
         .roi-metric-label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .roi-metric-description {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        .roi-summary-bottom {
+            background: #f5f5f5;
+            border-radius: 0 0 16px 16px;
+            padding: 40px 32px;
+            text-align: center;
+        }
+
+        .hours-saved-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        .hours-saved-large {
+            font-size: 72px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .hours-saved-subtitle {
             font-size: 14px;
-            opacity: 0.9;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .hours-saved-metrics {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 24px;
+        }
+
+        .hours-saved-metric {
+            text-align: center;
+        }
+
+        .hours-saved-metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 4px;
+        }
+
+        .hours-saved-metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .cost-comparison {
@@ -584,6 +663,46 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-top: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .roi-metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hours-saved-metrics {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .hours-saved-large {
+                font-size: 56px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .roi-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .roi-metric:not(:last-child)::after {
+                display: none;
+            }
+
+            .roi-metric {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-bottom: 24px;
+                margin-bottom: 24px;
+            }
+
+            .roi-metric:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+
+            .hours-saved-large {
+                font-size: 48px;
+            }
         }
 
         .time-savings-item {
@@ -923,19 +1042,44 @@
         <div class="results-section" id="results-section" style="display: none;">
             <!-- ROI Summary -->
             <div class="roi-summary">
-                <div class="roi-summary-title">Your ROI Summary</div>
-                <div class="roi-metrics-grid">
-                    <div class="roi-metric">
-                        <div class="roi-metric-value" id="monthly-savings">₹0</div>
-                        <div class="roi-metric-label">Monthly Savings</div>
+                <div class="roi-summary-top">
+                    <div class="roi-summary-title">Your ROI Summary</div>
+                    <div class="roi-metrics-grid">
+                        <div class="roi-metric">
+                            <div class="roi-metric-label">Annual Savings</div>
+                            <div class="roi-metric-value" id="annual-savings">₹0</div>
+                            <div class="roi-metric-description">Total yearly impact</div>
+                        </div>
+                        <div class="roi-metric">
+                            <div class="roi-metric-label">Cost Per Hire</div>
+                            <div class="roi-metric-value secondary" id="cost-per-hire">₹0</div>
+                            <div class="roi-metric-description" id="cost-per-hire-reduction-pct">0% reduction</div>
+                        </div>
+                        <div class="roi-metric">
+                            <div class="roi-metric-label">First Year Return on Investment</div>
+                            <div class="roi-metric-value" id="roi-percentage">0%</div>
+                            <div class="roi-metric-description">Total yearly impact</div>
+                        </div>
+                        <div class="roi-metric">
+                            <div class="roi-metric-label">Efficiency Gain</div>
+                            <div class="roi-metric-value secondary" id="efficiency-gain">0%</div>
+                            <div class="roi-metric-description">Process improvement</div>
+                        </div>
                     </div>
-                    <div class="roi-metric">
-                        <div class="roi-metric-value" id="roi-percentage">0%</div>
-                        <div class="roi-metric-label">ROI</div>
-                    </div>
-                    <div class="roi-metric">
-                        <div class="roi-metric-value" id="cost-per-hire-reduction">₹0</div>
-                        <div class="roi-metric-label">Cost Per Hire Reduction</div>
+                </div>
+                <div class="roi-summary-bottom">
+                    <div class="hours-saved-title">Hours Saved Monthly</div>
+                    <div class="hours-saved-large" id="total-hours-saved">0</div>
+                    <div class="hours-saved-subtitle">Based On Selected TheHireHub.AI Tools</div>
+                    <div class="hours-saved-metrics">
+                        <div class="hours-saved-metric">
+                            <div class="hours-saved-metric-value" id="monthly-savings-bottom">₹0</div>
+                            <div class="hours-saved-metric-label">Monthly Savings</div>
+                        </div>
+                        <div class="hours-saved-metric">
+                            <div class="hours-saved-metric-value" id="payback-period-bottom">0</div>
+                            <div class="hours-saved-metric-label">Payback Period (months)</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1423,11 +1567,27 @@
             // Based on time-to-hire reduction efficiency (35% reduction)
             const timeSavedInHiringCycle = timeToHire * EFFICIENCY_GAINS.timeToHireReduction;
 
-            // Display Results
-            document.getElementById('monthly-savings').textContent = formatCurrency(Math.round(monthlySavings));
+            // Calculate additional metrics for dashboard
+            const annualSavings = monthlySavings * 12;
+            const costPerHireReductionPct = costPerHireTraditional > 0 ? 
+                Math.round((costPerHireReduction / costPerHireTraditional) * 100) : 0;
+            const totalHoursSaved = Math.round(sourcingTimeSaved + screeningTimeSaved + coordinationTimeSaved);
+            const efficiencyGain = totalRecruiterHours > 0 ? 
+                Math.round((totalTimeSaved / totalRecruiterHours) * 100) : 0;
+            const paybackPeriod = monthlySavings > 0 ? Math.round((thehirehubCost / monthlySavings) * 10) / 10 : 0;
+
+            // Display Results - Dashboard Style
+            document.getElementById('annual-savings').textContent = formatMoney(Math.round(annualSavings));
+            document.getElementById('cost-per-hire').textContent = formatMoney(Math.round(costPerHireThehirehub));
+            document.getElementById('cost-per-hire-reduction-pct').textContent = costPerHireReductionPct + '% reduction';
             document.getElementById('roi-percentage').textContent = Math.round(roiPercentage) + '%';
-            document.getElementById('cost-per-hire-reduction').textContent = formatCurrency(Math.round(costPerHireReduction));
-            document.getElementById('total-savings-display').textContent = formatCurrency(Math.round(monthlySavings));
+            document.getElementById('efficiency-gain').textContent = efficiencyGain + '%';
+            document.getElementById('total-hours-saved').textContent = totalHoursSaved;
+            document.getElementById('monthly-savings-bottom').textContent = formatMoney(Math.round(monthlySavings));
+            document.getElementById('payback-period-bottom').textContent = paybackPeriod;
+            
+            // Legacy displays (keep for compatibility)
+            document.getElementById('total-savings-display').textContent = formatMoney(Math.round(monthlySavings));
 
             // Cost Breakdown - Without
             const breakdownWithout = `
