@@ -383,7 +383,7 @@
         }
 
         .roi-summary-top {
-            background: #1a1a1a;
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
             border-radius: 16px 16px 0 0;
             padding: 40px 32px;
             color: white;
@@ -423,7 +423,7 @@
             font-size: 36px;
             font-weight: 700;
             margin-bottom: 8px;
-            color: #ff6b35;
+            color: #a855f7;
         }
 
         .roi-metric-value.secondary {
@@ -446,10 +446,11 @@
         }
 
         .roi-summary-bottom {
-            background: #f5f5f5;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
             border-radius: 0 0 16px 16px;
             padding: 40px 32px;
             text-align: center;
+            border-top: 2px solid rgba(0, 212, 255, 0.2);
         }
 
         .hours-saved-title {
@@ -462,7 +463,10 @@
         .hours-saved-large {
             font-size: 72px;
             font-weight: 700;
-            color: #ff6b35;
+            background: linear-gradient(135deg, #00d4ff 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 8px;
             line-height: 1;
         }
@@ -487,7 +491,10 @@
         .hours-saved-metric-value {
             font-size: 24px;
             font-weight: 700;
-            color: #ff6b35;
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 4px;
         }
 
