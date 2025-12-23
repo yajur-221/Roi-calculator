@@ -1613,7 +1613,7 @@
             document.getElementById('efficiency-gain').textContent = efficiencyGain + '%';
             document.getElementById('total-hours-saved').textContent = totalHoursSaved;
             document.getElementById('monthly-savings-bottom').textContent = formatMoney(Math.round(monthlySavings));
-            document.getElementById('payback-period-bottom').textContent = paybackPeriod;
+            document.getElementById('time-saved-hiring-cycle-bottom').textContent = Math.round(timeSavedInHiringCycle * 10) / 10 + ' days';
             
             // Legacy displays (keep for compatibility)
 
