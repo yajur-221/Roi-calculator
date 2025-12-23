@@ -1437,12 +1437,19 @@
         }
 
         function updateAllCurrencyDisplays() {
+            const currency = CURRENCIES[selectedCurrency];
+            
+            // Update Average CTC per hire label specifically
+            const avgCtcLabel = document.getElementById('avg-ctc-per-hire-label');
+            if (avgCtcLabel) {
+                avgCtcLabel.textContent = `Average CTC per hire (${currency.symbol})`;
+            }
+            
             // Update all currency labels
             const currencyLabels = document.querySelectorAll('[class*="input-label"]');
             currencyLabels.forEach(label => {
-                if (label.textContent.includes('(₹)')) {
-                    const currency = CURRENCIES[selectedCurrency];
-                    label.textContent = label.textContent.replace(/\(₹\)/g, `(${currency.symbol})`);
+                if (label.textContent.includes('(₹)') || label.textContent.includes('($)') || label.textContent.includes('(€)') || label.textContent.includes('(£)') || label.textContent.includes('(د.إ)') || label.textContent.includes('(S$)')) {
+                    label.textContent = label.textContent.replace(/\([^)]+\)/g, `(${currency.symbol})`);
                 }
             });
             
@@ -1465,12 +1472,15 @@
             
             Object.keys(sliderLimits).forEach(inputId => {
                 const limits = sliderLimits[inputId];
-                const limitContainer = document.querySelector(`#${inputId}-slider`).closest('.slider-container').querySelector('.slider-limits');
-                if (limitContainer) {
-                    const spans = limitContainer.querySelectorAll('span');
-                    if (spans.length >= 2) {
-                        spans[0].textContent = formatCompactLabel(limits.min);
-                        spans[1].textContent = formatCompactLabel(limits.max);
+                const sliderElement = document.querySelector(`#${inputId}-slider`);
+                if (sliderElement) {
+                    const limitContainer = sliderElement.closest('.slider-container').querySelector('.slider-limits');
+                    if (limitContainer) {
+                        const spans = limitContainer.querySelectorAll('span');
+                        if (spans.length >= 2) {
+                            spans[0].textContent = formatCompactLabel(limits.min);
+                            spans[1].textContent = formatCompactLabel(limits.max);
+                        }
                     }
                 }
             });
