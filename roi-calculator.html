@@ -1233,6 +1233,9 @@
             // Update all currency displays
             updateAllCurrencyDisplays();
             
+            // Update plan recommendation to reflect new currency
+            updatePlanRecommendation();
+            
             // Recalculate if results are shown
             if (document.getElementById('results-section').style.display !== 'none') {
                 calculateROI();
@@ -1322,6 +1325,9 @@
             
             // Update initial displays
             updateAllCurrencyDisplays();
+            
+            // Update plan recommendation with selected currency
+            updatePlanRecommendation();
         }
 
         // Legacy function for backward compatibility
