@@ -55,8 +55,121 @@
             font-size: 18px;
             color: #666;
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 24px;
             line-height: 1.6;
+        }
+
+        .currency-selector-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 48px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .currency-selector-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .currency-select {
+            padding: 10px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            background: white;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .currency-select:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+        }
+
+        .currency-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Modal styles for currency conversion */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        .modal-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .modal-button {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button.primary {
+            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .modal-button.secondary {
+            background: #e2e8f0;
+            color: #1a1a1a;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .input-section {
@@ -572,6 +685,33 @@
             Calculate your potential savings and ROI with TheHireHub.AI's AI-powered recruitment platform
         </p>
 
+        <!-- Currency Selector -->
+        <div class="currency-selector-container">
+            <span class="currency-selector-label">Currency:</span>
+            <select id="currency-selector" class="currency-select">
+                <option value="INR">INR (₹)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="AED">AED (د.إ)</option>
+                <option value="SGD">SGD (S$)</option>
+            </select>
+        </div>
+
+        <!-- Currency Conversion Modal -->
+        <div id="currency-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3 class="modal-title">Currency Conversion</h3>
+                <p class="modal-message">
+                    Do you want to convert existing input values to the new currency using an exchange rate, or just change the symbol/format?
+                </p>
+                <div class="modal-buttons">
+                    <button class="modal-button secondary" onclick="handleCurrencyChange('keep')">Keep Values</button>
+                    <button class="modal-button primary" onclick="handleCurrencyChange('convert')">Convert Values</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Current Hiring Metrics -->
         <div class="input-section">
             <h2 class="section-title">1. Current Hiring Metrics</h2>
@@ -924,8 +1064,99 @@
             coordinationPerHire: 2         // hours
         };
 
+        // Currency Management
+        const CURRENCIES = {
+            INR: { code: 'INR', symbol: '₹', locale: 'en-IN' },
+            USD: { code: 'USD', symbol: '$', locale: 'en-US' },
+            EUR: { code: 'EUR', symbol: '€', locale: 'en-US' },
+            GBP: { code: 'GBP', symbol: '£', locale: 'en-US' },
+            AED: { code: 'AED', symbol: 'د.إ', locale: 'en-US' },
+            SGD: { code: 'SGD', symbol: 'S$', locale: 'en-US' }
+        };
+
+        // Exchange rates (base: INR = 1)
+        const EXCHANGE_RATES = {
+            INR: 1,
+            USD: 0.012,    // 1 INR = 0.012 USD (approx 83 INR = 1 USD)
+            EUR: 0.011,    // 1 INR = 0.011 EUR
+            GBP: 0.0095,   // 1 INR = 0.0095 GBP
+            AED: 0.044,    // 1 INR = 0.044 AED
+            SGD: 0.016     // 1 INR = 0.016 SGD
+        };
+
+        // Get selected currency from localStorage or default to INR
+        let selectedCurrency = localStorage.getItem('selectedCurrency') || 'INR';
+        let previousCurrency = selectedCurrency;
+        let pendingCurrencyChange = null;
+
+        // Format money based on selected currency
+        function formatMoney(amount) {
+            if (amount === null || amount === undefined || isNaN(amount)) {
+                amount = 0;
+            }
+            
+            const currency = CURRENCIES[selectedCurrency];
+            const locale = currency.locale;
+            
+            // For large numbers, use compact notation
+            const options = {
+                style: 'currency',
+                currency: currency.code,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+                notation: amount >= 1000000 ? 'compact' : 'standard'
+            };
+
+            // Special handling for INR - use Indian numbering system
+            if (selectedCurrency === 'INR') {
+                return new Intl.NumberFormat('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                    notation: amount >= 100000 ? 'compact' : 'standard',
+                    compactDisplay: 'short'
+                }).format(amount);
+            }
+
+            return new Intl.NumberFormat(locale, options).format(amount);
+        }
+
+        // Format compact labels (for slider limits like ₹3L, ₹50L)
+        function formatCompactLabel(amount) {
+            const currency = CURRENCIES[selectedCurrency];
+            
+            if (selectedCurrency === 'INR') {
+                if (amount >= 10000000) {
+                    return currency.symbol + (amount / 10000000).toFixed(1) + 'Cr';
+                } else if (amount >= 100000) {
+                    return currency.symbol + (amount / 100000).toFixed(0) + 'L';
+                } else if (amount >= 1000) {
+                    return currency.symbol + (amount / 1000).toFixed(0) + 'K';
+                }
+                return currency.symbol + amount;
+            } else {
+                // For other currencies, use standard compact notation
+                if (amount >= 1000000) {
+                    return currency.symbol + (amount / 1000000).toFixed(1) + 'M';
+                } else if (amount >= 1000) {
+                    return currency.symbol + (amount / 1000).toFixed(0) + 'K';
+                }
+                return currency.symbol + amount;
+            }
+        }
+
+        // Convert amount from one currency to another
+        function convertCurrency(amount, fromCurrency, toCurrency) {
+            if (fromCurrency === toCurrency) return amount;
+            // Convert to INR first, then to target currency
+            const inINR = amount / EXCHANGE_RATES[fromCurrency];
+            return inINR * EXCHANGE_RATES[toCurrency];
+        }
+
+        // Legacy function for backward compatibility (now uses formatMoney)
         function formatCurrency(num) {
-            return '₹' + num.toLocaleString('en-IN');
+            return formatMoney(num);
         }
 
         function formatNumber(num) {
@@ -957,9 +1188,11 @@
             if (plan.monthlyPrice === null) {
                 document.getElementById('recommended-plan-price').textContent = 'Custom Pricing - Contact Sales';
             } else {
-                const monthlyPriceINR = plan.monthlyPrice * USD_TO_INR;
+                // Plan prices are in USD, convert to selected currency
+                const planPriceUSD = plan.monthlyPrice;
+                const planPriceInSelectedCurrency = convertCurrency(planPriceUSD, 'USD', selectedCurrency);
                 document.getElementById('recommended-plan-price').innerHTML = 
-                    `${formatCurrencyUSD(plan.monthlyPrice)}/month<br><span style="font-size: 18px; opacity: 0.9;">(${formatCurrency(Math.round(monthlyPriceINR))}/month)</span>`;
+                    `${formatMoney(Math.round(planPriceInSelectedCurrency))}/month`;
             }
 
             // Update plan features
@@ -981,8 +1214,119 @@
             document.getElementById('plan-recommendation').style.display = 'block';
         }
 
+        // Currency change handlers
+        function handleCurrencyChange(mode) {
+            const modal = document.getElementById('currency-modal');
+            modal.classList.remove('active');
+            
+            if (mode === 'convert' && pendingCurrencyChange) {
+                convertAllValues(previousCurrency, pendingCurrencyChange);
+            }
+            
+            selectedCurrency = pendingCurrencyChange;
+            previousCurrency = selectedCurrency;
+            localStorage.setItem('selectedCurrency', selectedCurrency);
+            
+            // Update currency selector
+            document.getElementById('currency-selector').value = selectedCurrency;
+            
+            // Update all currency displays
+            updateAllCurrencyDisplays();
+            
+            // Recalculate if results are shown
+            if (document.getElementById('results-section').style.display !== 'none') {
+                calculateROI();
+            }
+        }
+
+        function convertAllValues(fromCurrency, toCurrency) {
+            // Get all money input fields
+            const moneyInputs = [
+                'avg-ctc-per-hire',
+                'recruiter-monthly-salary',
+                'job-board-costs',
+                'ats-costs',
+                'other-tools-costs',
+                'job-slots-costs'
+            ];
+            
+            moneyInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input && input.value) {
+                    const currentValue = parseFloat(input.value) || 0;
+                    const convertedValue = convertCurrency(currentValue, fromCurrency, toCurrency);
+                    input.value = Math.round(convertedValue);
+                    
+                    // Update slider if exists
+                    const slider = document.getElementById(inputId + '-slider');
+                    if (slider) {
+                        slider.value = Math.round(convertedValue);
+                    }
+                }
+            });
+        }
+
+        function updateAllCurrencyDisplays() {
+            // Update all currency labels
+            const currencyLabels = document.querySelectorAll('[class*="input-label"]');
+            currencyLabels.forEach(label => {
+                if (label.textContent.includes('(₹)')) {
+                    const currency = CURRENCIES[selectedCurrency];
+                    label.textContent = label.textContent.replace(/\(₹\)/g, `(${currency.symbol})`);
+                }
+            });
+            
+            // Update slider limit labels
+            updateSliderLabels();
+        }
+
+        function updateSliderLabels() {
+            const currency = CURRENCIES[selectedCurrency];
+            
+            // Update all slider limit spans
+            const sliderLimits = {
+                'avg-ctc-per-hire': { min: 300000, max: 5000000 },
+                'recruiter-monthly-salary': { min: 0, max: 500000 },
+                'job-board-costs': { min: 0, max: 500000 },
+                'ats-costs': { min: 0, max: 300000 },
+                'other-tools-costs': { min: 0, max: 200000 },
+                'job-slots-costs': { min: 0, max: 500000 }
+            };
+            
+            Object.keys(sliderLimits).forEach(inputId => {
+                const limits = sliderLimits[inputId];
+                const limitContainer = document.querySelector(`#${inputId}-slider`).closest('.slider-container').querySelector('.slider-limits');
+                if (limitContainer) {
+                    const spans = limitContainer.querySelectorAll('span');
+                    if (spans.length >= 2) {
+                        spans[0].textContent = formatCompactLabel(limits.min);
+                        spans[1].textContent = formatCompactLabel(limits.max);
+                    }
+                }
+            });
+        }
+
+        // Initialize currency selector
+        function initCurrencySelector() {
+            const selector = document.getElementById('currency-selector');
+            selector.value = selectedCurrency;
+            
+            selector.addEventListener('change', (e) => {
+                const newCurrency = e.target.value;
+                if (newCurrency !== selectedCurrency) {
+                    pendingCurrencyChange = newCurrency;
+                    const modal = document.getElementById('currency-modal');
+                    modal.classList.add('active');
+                }
+            });
+            
+            // Update initial displays
+            updateAllCurrencyDisplays();
+        }
+
+        // Legacy function for backward compatibility
         function formatCurrencyUSD(num) {
-            return '$' + num.toLocaleString('en-US');
+            return formatMoney(num);
         }
 
         function calculateROI() {
@@ -1031,9 +1375,12 @@
             const recommendedPlan = PLANS[recommendedPlanKey];
             let thehirehubCost = 0;
             if (recommendedPlan.monthlyPrice === null) {
-                thehirehubCost = PLANS.growth.monthlyPrice * USD_TO_INR * 1.5; // Enterprise estimate (monthly)
+                // Enterprise estimate: convert from USD to selected currency
+                const enterpriseEstimateUSD = PLANS.growth.monthlyPrice * 1.5;
+                thehirehubCost = convertCurrency(enterpriseEstimateUSD, 'USD', selectedCurrency);
             } else {
-                thehirehubCost = recommendedPlan.monthlyPrice * USD_TO_INR; // Monthly cost
+                // Convert plan price from USD to selected currency
+                thehirehubCost = convertCurrency(recommendedPlan.monthlyPrice, 'USD', selectedCurrency);
             }
 
             // Update plan recommendation display
@@ -1183,6 +1530,18 @@
         
         // Update plan recommendation when positions-per-month changes
         document.getElementById('positions-per-month').addEventListener('input', updatePlanRecommendation);
+        
+        // Initialize currency selector on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initCurrencySelector();
+        });
+        
+        // Also initialize immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCurrencySelector);
+        } else {
+            initCurrencySelector();
+        }
         
         // Initial plan recommendation check
         updatePlanRecommendation();
