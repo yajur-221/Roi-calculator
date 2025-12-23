@@ -688,10 +688,11 @@
         }
 
         .time-savings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
+            flex-direction: row;
             gap: 16px;
             margin-top: 24px;
+            justify-content: space-between;
         }
 
         @media (max-width: 1024px) {
@@ -1148,11 +1149,6 @@
                     <div class="time-savings-item">
                         <div class="time-savings-value" id="coordination-time-saved">0 hrs</div>
                         <div class="time-savings-label">Coordination Time Saved/Month</div>
-                    </div>
-                    <div class="time-savings-item">
-                        <div class="time-savings-value" id="time-saved-hiring-cycle">0 days</div>
-                        <div class="time-savings-label">Time saved in the hiring cycle</div>
-                        <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">(Depends on the recruiters efficiency)</div>
                     </div>
                 </div>
             </div>
