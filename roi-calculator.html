@@ -505,11 +505,27 @@
             letter-spacing: 0.5px;
         }
 
+        .cost-comparison-wrapper {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            margin-top: 32px;
+            align-items: start;
+        }
+
+        .hours-saved-sidebar {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
         .cost-comparison {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 24px;
-            margin-top: 32px;
         }
 
         .cost-card {
@@ -1074,7 +1090,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="roi-summary-bottom">
+            </div>
+
+            <!-- Cost Comparison with Hours Saved Sidebar -->
+            <div class="cost-comparison-wrapper">
+                <!-- Hours Saved Sidebar -->
+                <div class="hours-saved-sidebar">
                     <div class="hours-saved-title">Hours Saved Monthly</div>
                     <div class="hours-saved-large" id="total-hours-saved">0</div>
                     <div class="hours-saved-subtitle">Based On Selected TheHireHub.AI Tools</div>
@@ -1089,10 +1110,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Cost Comparison -->
-            <div class="cost-comparison">
+                <!-- Cost Comparison -->
+                <div class="cost-comparison">
                 <h2 class="section-title" style="grid-column: 1 / -1; margin-bottom: 24px; text-align: center;">Total cost comparison (per month)</h2>
                 <div class="cost-card without">
                     <div class="cost-card-title">Without TheHireHub.AI</div>
