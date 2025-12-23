@@ -1530,7 +1530,8 @@
             const atsCosts = parseFloat(document.getElementById('ats-costs').value) || 0; // Already monthly
             const otherToolsCosts = parseFloat(document.getElementById('other-tools-costs').value) || 0; // Already monthly
             const jobSlotsUsed = parseFloat(document.getElementById('job-slots-used').value) || 0;
-            const jobSlotsCosts = parseFloat(document.getElementById('job-slots-costs').value) || 0; // Already monthly
+            const jobSlotsCostPerSlot = parseFloat(document.getElementById('job-slots-costs').value) || 0; // Cost per slot per month
+            const jobSlotsCosts = jobSlotsCostPerSlot * jobSlotsUsed; // Total cost = cost per slot * number of slots used
             // Default values for quality metrics (no longer user inputs)
             const candidatesPerHire = 15; // Default: 15 candidates screened per hire
 
