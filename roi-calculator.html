@@ -741,6 +741,8 @@
             padding: 16px;
             text-align: center;
             border: 1px solid rgba(0, 212, 255, 0.2);
+            flex: 1;
+            min-width: 0;
         }
 
         .time-savings-value {
@@ -815,7 +817,7 @@
             }
 
             .time-savings-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
 
             .plan-recommendation-features {
