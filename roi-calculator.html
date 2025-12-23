@@ -383,10 +383,13 @@
         }
 
         .roi-summary-top {
-            background: linear-gradient(135deg, #00d4ff 0%, #2563eb 100%);
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
             border-radius: 16px 16px 0 0;
             padding: 40px 32px;
-            color: white;
+            border-top: 2px solid #a855f7;
+            border-bottom: 2px solid #00d4ff;
+            border-left: none;
+            border-right: none;
         }
 
         .roi-summary-title {
@@ -416,7 +419,7 @@
             top: 20%;
             bottom: 20%;
             width: 1px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.1);
         }
 
         .roi-metric-value {
@@ -434,7 +437,7 @@
         .roi-metric-label {
             font-size: 12px;
             font-weight: 700;
-            opacity: 0.9;
+            color: #1a1a1a;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 4px;
